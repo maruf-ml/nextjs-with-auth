@@ -1,18 +1,28 @@
-import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { getSession, useSession } from 'next-auth/react';
 
 const Profile = () => {
-  const { user, error, isLoading } = useUser();
-  return (
-    !isLoading && (
+  const { data: session } = useSession();
+
+  if (typeof window === 'undefined') return null;
+
+  if (session) {
+    return (
       <div>
-        <p>Username: {user?.name}</p>
-        <p>Email: {user?.email}</p>
-        <p>Id: {user?.sub}</p>
+        <p>Username: {session.user?.name}</p>
+        <p>Email: {session.user?.email}</p>
       </div>
-    )
-  );
+    );
+  }
+
+  return <p>Access Denied</p>;
 };
 
-export const getServerSideProps = withPageAuthRequired();
+export async function getServerSideProps(context: any) {
+  return {
+    props: {
+      session: await getSession(context),
+    },
+  };
+}
 
 export default Profile;

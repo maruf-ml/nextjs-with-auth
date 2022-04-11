@@ -1,11 +1,20 @@
 import { UserCircleIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
-import { useUser } from '@auth0/nextjs-auth0';
 import { useState } from 'react';
+import { signIn, signOut } from 'next-auth/react';
+import Image from 'next/image';
 
-const Header = () => {
-  const { user, error, isLoading } = useUser();
+type HeaderProps = {
+  session: any;
+};
+
+const Header = ({ session }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  if (session !== null) {
+    console.log(typeof session.user.image);
+    console.log(session.user.email);
+  }
 
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
@@ -15,28 +24,32 @@ const Header = () => {
     <header className="relative flex h-10 items-center justify-between bg-gray-400 px-5 py-6 shadow-md">
       <p className="text-sm font-bold text-white">Brand Logo</p>
 
-      <div onClick={toggleDropdown}>
-        {user && !isLoading ? (
-          <img
-            src={'' + user?.picture}
+      <div onClick={toggleDropdown} className="h-[28px]">
+        {session !== null ? (
+          <Image
+            src={'' + session?.user?.image}
             width="28px"
             height="28px"
-            className="rounded-full"
+            className="cursor-pointer rounded-full"
           />
         ) : (
-          <UserCircleIcon className="h-7 rounded-full bg-blue-300 text-white" />
+          <UserCircleIcon className="h-7 cursor-pointer rounded-full bg-blue-300 text-white" />
         )}
       </div>
 
       {isOpen && (
         <div className="absolute top-[58px] right-[10px] flex  w-[100px] flex-col rounded-lg bg-slate-100 p-3 text-sm shadow-lg">
-          {user && !isLoading ? (
+          {session !== null ? (
             <>
               <Link href={'/profile'}>Profile</Link>
-              <a href="/api/auth/logout">Logout</a>
+              <p className="cursor-pointer" onClick={() => signOut()}>
+                Logout
+              </p>
             </>
           ) : (
-            <a href="/api/auth/login">Login</a>
+            <p className="cursor-pointer" onClick={() => signIn()}>
+              Login
+            </p>
           )}
         </div>
       )}

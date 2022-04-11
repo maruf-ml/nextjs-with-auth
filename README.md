@@ -1,6 +1,6 @@
 # Next.js + Auth0
 
-This example shows how to use Auth0 with NextJS
+This example shows how to use NextAuth with NextJS
 
 ## How to use
 
