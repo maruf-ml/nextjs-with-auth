@@ -25,7 +25,7 @@ const Header = ({ session }: HeaderProps) => {
       <p className="text-sm font-bold text-white">Brand Logo</p>
 
       <div onClick={toggleDropdown} className="h-[28px]">
-        {session !== null ? (
+        {session !== null && session?.user?.image ? (
           <Image
             src={'' + session?.user?.image}
             width="28px"
